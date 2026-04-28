@@ -3,8 +3,20 @@ class CalcController {
     constructor(){
 
         this._displayCalc = "0"; //display da calculadora
-        this._dataAtual;
+        this._currentDate;
+        this.initialize();
 
+    }
+
+    initialize() {
+
+        let displayCalcEl = document.querySelector("#display");
+        let dateEl =document.querySelector("#data");
+        let timeEl = document.querySelector("#hora");
+
+        displayCalcEl.innerHTML = "4587"
+        dateEl.innerHTML = "28/04/2026"  
+        timeEl.innerHTML = "00:17"  
     }
  
     get displayCalc() {
@@ -17,15 +29,15 @@ class CalcController {
         this._displayCalc = valor; 
     }
 
-    get dataAtual() {
+    get currentDate() {
 
-        return this._dataAtual;
+        return this._currentDate;
 
     }
 
-    set dataAtual(valor) {
+    set currentDate(valor) {
 
-        this._dataAtual = valor;
+        this._currentDate = valor;
 
     }
 
