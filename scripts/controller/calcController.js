@@ -24,17 +24,30 @@ class CalcController {
 
     }
  
+    addEventListenerAll(element, events, fn){ //tratar múltiplos eventos
+
+        events.split(' ').forEach(event => {
+
+            element.addEventListener(event, fn, false);
+
+        });
+    }
+
     initButtonsEvents(){ //controla os botões
 
        let buttons = document.querySelectorAll("#buttons > g, #parts > g"); //para puxar as tags filhos
 
        buttons.forEach((btn, index)=>{
 
-        btn.addEventListener('click', e=>{
+        this.addEventListenerAll(btn, "click drag", e=>{
 
             console.log(btn.className.baseVal.replace("btn-",""));
-            })
-       })
+            });
+
+            this.addEventListenerAll(btn, "mouseover mouseup mousedown", e=> {
+                btn.style.cursor = "pointer";
+            });
+       });
     }
 
     setDisplayDateTime() {
