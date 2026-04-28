@@ -15,7 +15,7 @@ class CalcController {
 
         this.setDisplayDateTime();
 
-        setInterval(()=>{
+        setInterval(()=>{ //para controlar o tempo do relógio
 
             this.setDisplayDateTime();
 
@@ -23,6 +23,12 @@ class CalcController {
 
     }
  
+    initButtonsEvents(){
+
+       let buttons = document.querySelectorAll("#buttons > g, #parts > g"); //para puxar as tags filhos
+
+    }
+
     setDisplayDateTime() {
 
         this.displayDate = this.currentDate.toLocaleDateString(this._locale,{
