@@ -23,6 +23,8 @@ class CalcController {
 
         }, 1000);
 
+        this.setLastNumberToDisplay();
+
     }
  
     addEventListenerAll(element, events, fn){ //tratar múltiplos eventos
@@ -38,10 +40,14 @@ class CalcController {
 
         this._operation = [];
 
+        this.setLastNumberToDisplay();
+
     }
     clearEntry() {
 
         this._operation.pop();
+
+        this.setLastNumberToDisplay();
 
     }
 
@@ -59,7 +65,7 @@ class CalcController {
 
     isOperator(value) {
 
-       return (['+', '-', '*', '/'].indexOf(value) > -1);
+       return (['+', '-', '*', '/', '%'].indexOf(value) > -1);
 
     }
 
@@ -76,11 +82,27 @@ class CalcController {
 
     calc() {
 
-        let last = this._operation.pop();
+        let last = '';
+
+        if (this._operation.length > 3) {
+            let last = this._operation.pop();
+        }
 
         let result = eval(this._operation.join(""));
 
-        this._operation = [result, last];
+        if (last == '%') {
+
+            result /= 100;
+
+            this._operation = [result];
+
+        } else {
+
+            this._operation = [result];
+
+            if (last) this._operation.push(last);
+
+        }
 
         this.setLastNumberToDisplay();
     }
@@ -97,13 +119,14 @@ class CalcController {
             }
         }
 
+        if (!lastNumber) lastNumber = 0;
 
         this.displayCalc = lastNumber;
     }
 
     addOperation(value) {
 
-        if('A', value, isNaN(this.getLastOperation())) {
+        if(isNaN(this.getLastOperation())) {
 
             if (this.isOperator(value)) {
 
@@ -166,10 +189,10 @@ class CalcController {
                     this.addOperation('*');
                     break;
                 case 'porcento':
-                    this.clearAll('%');
+                    this.addOperation('%');
                     break;    
                 case 'igual':
-                    this.clearAll();
+                    this.calc();
                     break;
                 case 'ponto':
                     this.clearAll('.');
