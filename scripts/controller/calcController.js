@@ -17,6 +17,36 @@ class CalcController {
 
     }
 
+    pasteFromClipboard() { //colar
+
+        document.addEventListener('paste', e => {
+            
+            let text = e.clipboardData.getData('Text');
+            let parsedValue = parseFloat(text);
+            
+            if (!isNaN(parsedValue)) {
+                
+                if (this.isOperator(this.getLastOperation()) || this._operation.length === 0) {
+                    this.pushOperation(parsedValue);
+                } else {
+                    this.setLastOperation(parsedValue);
+                }
+                
+                this.setLastNumberToDisplay();
+            }
+        });
+    }
+
+    copyToClipboard() { //copiar
+
+    document.addEventListener('copy', e => {
+            e.preventDefault(); 
+            
+            e.clipboardData.setData('Text', this.displayCalc);
+            
+        });
+    }
+
     initialize() {
 
         this.setDisplayDateTime();
@@ -28,10 +58,12 @@ class CalcController {
         }, 1000);
 
         this.setLastNumberToDisplay();
+        this.pasteFromClipboard();
+        this.copyToClipboard(); //Adicionado para que a função seja aplicada na calculadora
 
     }
 
-    initKeyboard() {
+    initKeyboard() { //Ações de teclado
 
         document.addEventListener('keyup', e=> {
 
@@ -70,6 +102,21 @@ class CalcController {
                 case '8':
                 case '9':    
                     this.addOperation(parseInt(e.key));
+                    break;
+
+                case 'c':
+                case 'C':
+                    if(e.ctrlKey) this.copyToClipboard();
+                    break; 
+                
+                case 'v': 
+                case 'V': 
+                    break;
+                
+                case 'Control':
+                case 'Shift':
+                case 'Alt':
+                case 'Meta':
                     break;
 
                 default:
