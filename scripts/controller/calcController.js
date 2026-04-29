@@ -45,9 +45,48 @@ class CalcController {
 
     }
 
+    getLastOperation() {
+
+       return this._operation[this._operation.length-1];
+
+    }
+
+    setLastOperation(value) {
+
+        this._operation[this._operation.length - 1] = value;
+
+    }
+
+    isOperator(value) {
+
+       return (['+', '-', '*', '/'].indexOf(value) > -1);
+
+    }
+
     addOperation(value) {
 
-        this._operation.push(value);
+        if(isNaN(this.getLastOperation())) {
+
+            if (this.isOperator(value)) {
+
+                this._setLastOperation(value);
+
+            } else if(isNaN(value)) {
+
+                console.log(value);
+
+            }  else {
+
+                this._operation.push(value);
+            }
+        } else {
+
+            let newValue = this.getLastOperation().toString() + value.toString();
+
+            this.setLastOperation(parseInt(newValue));
+        }
+
+        console.log(this._operation);
 
     }
 
@@ -68,42 +107,54 @@ class CalcController {
                     this.clearEntry();
                     break;
                 case 'soma':
-                    this.clearAll();
+                    this.addOperation('+');
                     break;
                 case 'subtracao':
-                    this.clearAll();
+                    this.addOperation('-');
                     break;
                 case 'divisao':
-                    this.clearAll();
+                    this.addOperation('/');
                     break;
                 case 'multiplicacao':
-                    this.clearAll();
+                    this.addOperation('*');
                     break;
+                case 'porcento':
+                    this.clearAll('%');
+                    break;    
                 case 'igual':
                     this.clearAll();
                     break;
-                case 'porcento':
-                    this.clearAll();
+                case 'ponto':
+                    this.clearAll('.');
                     break;
 
                 case '0':
                     this.addOperation(parseInt(value));
+                    break;
                 case '1':
                     this.addOperation(parseInt(value)); 
+                    break;
                 case '2':
                     this.addOperation(parseInt(value));
+                    break;
                 case '3':
                     this.addOperation(parseInt(value));
+                    break;
                 case '4':
                     this.addOperation(parseInt(value));
+                    break;
                 case '5':
                     this.addOperation(parseInt(value));
+                    break;
                 case '6':
                     this.addOperation(parseInt(value));
+                    break;
                 case '7':
                     this.addOperation(parseInt(value));
+                    break;
                 case '8':
                     this.addOperation(parseInt(value));
+                    break;
                 case '9':    
                     this.addOperation(parseInt(value));
                     break;
@@ -123,9 +174,8 @@ class CalcController {
 
         this.addEventListenerAll(btn, "click drag", e=>{
 
-            let textBtn = btn.className.baseVal.replace("btn-", "")
-
-            this.execBtn();
+            let textBtn = btn.className.baseVal.replace("btn-", "");
+            this.execBtn(textBtn);
 
         });
 
