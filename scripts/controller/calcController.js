@@ -279,7 +279,6 @@ class CalcController {
     }
 
     calc() {
-
         let last = '';
         this._lastOperator = this.getLastItem();
         
@@ -294,35 +293,27 @@ class CalcController {
 
             last = this._operation.pop();
             this._lastNumber = this.getResult();
+            
+            } else if (this._operation.length == 3) {
 
-        } else if (this._operation.length == 3) {
-
-            this._lastNumber = this.getLastItem(false);
-
+                this._lastNumber = this.getLastItem(false);
         }
 
+        let expressionStr = this._operation.join(" ") + " ="; 
         let result = this.getResult();
+        this.addToHistory(expressionStr, result);
 
         if (last == '%') {
-
             result /= 100;
-
             this._operation = [result];
-
         } else {
-
-            this._operation = [result];
-
+           
+            this._operation = [result]; 
+            
             if (last) this._operation.push(last);
-
         }
 
         this.setLastNumberToDisplay();
-
-        //testando método do histórico
-        let expressionStr = this._operation.join(" ") + " ="; 
-
-        this.addToHistory(expressionStr, result);
     }
 
     getLastItem(isOperator = true)  { //retornará o último número que foi utilizado na calculadora
