@@ -14,7 +14,7 @@ class CalcController {
         this._displayCalcEl = document.querySelector("#display")
         this._dateEl =document.querySelector("#data");
         this._timeEl = document.querySelector("#hora");
-        this._historyListEl = document.querySelection("#lista-historico");
+        this._historyListEl = document.querySelector("#lista-historico");
         this._btnClearHistory = document.querySelector("#limpar");
 
         this._currentDate;
@@ -94,26 +94,40 @@ class CalcController {
         }
     }
 
-    addToHistory(expression, result) {
+    initHistoryEvents() {
+        if (this._btnClearHistory) {
+            this._btnClearHistory.addEventListener('click', () => {
+                this.clearHistory(); 
+            });
+        }
+        this.renderHistory(); 
+    }
 
+    addToHistory(expression, result) {
         this._history.push({ expression, result});
-            this.renderHistory();
+        this.renderHistory();
     }
 
     clearHistory() {
+        this._history = []; 
+        this.renderHistory(); 
+    }
+
+    renderHistory() {
         this._historyListEl.innerHTML = '';
 
         this._history.forEach(item => {
             let li = document.createElement('li');
-            li.className = 'historico';
+            li.className = 'historico-item'; 
 
             li.innerHTML = `
                 <div class="historico-expression">${item.expression}</div>
                 <div class="historico-resultado">${item.result}</div>
             `;
-            
+
             this._historyListEl.appendChild(li);
         });
+        
         this._historyListEl.scrollTop = this._historyListEl.scrollHeight;
     }
 
@@ -307,8 +321,6 @@ class CalcController {
 
         //testando método do histórico
         let expressionStr = this._operation.join(" ") + " ="; 
-        
-        let result = this.getResult();
 
         this.addToHistory(expressionStr, result);
     }
@@ -453,14 +465,6 @@ class CalcController {
        });
     }
 
-    initHistoryEvents() {
-        if (this._btnClearHistory) {
-            this._btnClearHistory.addEventListener('click', () => {
-                this._btnClearHistory();
-            });
-        }
-        this.renderHistory();
-    }
 
     setDisplayDateTime() {
 
