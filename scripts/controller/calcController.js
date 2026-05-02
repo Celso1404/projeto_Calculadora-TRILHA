@@ -8,15 +8,20 @@ class CalcController {
         this._lastNumber = '';
 
         this._operation = []; //ajuda a controlar o histórico
+        this._history = [];
+
         this._locale = 'pt-BR';
         this._displayCalcEl = document.querySelector("#display")
         this._dateEl =document.querySelector("#data");
         this._timeEl = document.querySelector("#hora");
+        this._historyListEl = document.querySelection("#lista-historico");
+        this._btnClearHistory = document.querySelector("#limpar");
+
         this._currentDate;
         this.initialize();
         this.initButtonsEvents();
         this.initKeyboard();
-
+        this.initHistoryEvents();
     }
 
     pasteFromClipboard() { //colar
@@ -87,6 +92,29 @@ class CalcController {
             this._audio.play();
 
         }
+    }
+
+    addToHistory(expression, result) {
+
+        this._history.push({ expression, result});
+            this.renderHistory();
+    }
+
+    clearHistory() {
+        this._historyListEl.innerHTML = '';
+
+        this._history.forEach(item => {
+            let li = document.createElement('li');
+            li.className = 'historico';
+
+            li.innerHTML = `
+                <div class="historico-expression">${item.expression}</div>
+                <div class="historico-resultado">${item.result}</div>
+            `;
+            
+            this._historyListEl.appendChild(li);
+        });
+        this._historyListEl.scrollTop = this._historyListEl.scrollHeight;
     }
 
     initKeyboard() { //Ações de teclado
@@ -276,6 +304,13 @@ class CalcController {
         }
 
         this.setLastNumberToDisplay();
+
+        //testando método do histórico
+        let expressionStr = this._operation.join(" ") + " ="; 
+        
+        let result = this.getResult();
+
+        this.addToHistory(expressionStr, result);
     }
 
     getLastItem(isOperator = true)  { //retornará o último número que foi utilizado na calculadora
@@ -416,6 +451,15 @@ class CalcController {
                 btn.style.cursor = "pointer";
             });
        });
+    }
+
+    initHistoryEvents() {
+        if (this._btnClearHistory) {
+            this._btnClearHistory.addEventListener('click', () => {
+                this._btnClearHistory();
+            });
+        }
+        this.renderHistory();
     }
 
     setDisplayDateTime() {
