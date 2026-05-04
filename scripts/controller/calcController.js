@@ -8,15 +8,20 @@ class CalcController {
         this._lastNumber = '';
 
         this._operation = []; //ajuda a controlar o histórico
+        this._history = [];
+
         this._locale = 'pt-BR';
         this._displayCalcEl = document.querySelector("#display")
         this._dateEl =document.querySelector("#data");
         this._timeEl = document.querySelector("#hora");
+        this._historyListEl = document.querySelector("#lista-historico");
+        this._btnClearHistory = document.querySelector("#limpar");
+
         this._currentDate;
         this.initialize();
         this.initButtonsEvents();
         this.initKeyboard();
-
+        this.initHistoryEvents();
     }
 
     pasteFromClipboard() { //colar
@@ -87,6 +92,43 @@ class CalcController {
             this._audio.play();
 
         }
+    }
+
+    initHistoryEvents() {
+        if (this._btnClearHistory) {
+            this._btnClearHistory.addEventListener('click', () => {
+                this.clearHistory(); 
+            });
+        }
+        this.renderHistory(); 
+    }
+
+    addToHistory(expression, result) {
+        this._history.push({ expression, result});
+        this.renderHistory();
+    }
+
+    clearHistory() {
+        this._history = []; 
+        this.renderHistory(); 
+    }
+
+    renderHistory() {
+        this._historyListEl.innerHTML = '';
+
+        this._history.forEach(item => {
+            let li = document.createElement('li');
+            li.className = 'historico-item'; 
+
+            li.innerHTML = `
+                <div class="historico-expression">${item.expression}</div>
+                <div class="historico-resultado">${item.result}</div>
+            `;
+
+            this._historyListEl.appendChild(li);
+        });
+        
+        this._historyListEl.scrollTop = this._historyListEl.scrollHeight;
     }
 
     initKeyboard() { //Ações de teclado
@@ -237,7 +279,6 @@ class CalcController {
     }
 
     calc() {
-
         let last = '';
         this._lastOperator = this.getLastItem();
         
@@ -252,27 +293,24 @@ class CalcController {
 
             last = this._operation.pop();
             this._lastNumber = this.getResult();
+            
+            } else if (this._operation.length == 3) {
 
-        } else if (this._operation.length == 3) {
-
-            this._lastNumber = this.getLastItem(false);
-
+                this._lastNumber = this.getLastItem(false);
         }
 
+        let expressionStr = this._operation.join(" ") + " ="; 
         let result = this.getResult();
+        this.addToHistory(expressionStr, result);
 
         if (last == '%') {
-
             result /= 100;
-
             this._operation = [result];
-
         } else {
-
-            this._operation = [result];
-
+           
+            this._operation = [result]; 
+            
             if (last) this._operation.push(last);
-
         }
 
         this.setLastNumberToDisplay();
@@ -417,6 +455,7 @@ class CalcController {
             });
        });
     }
+
 
     setDisplayDateTime() {
 
